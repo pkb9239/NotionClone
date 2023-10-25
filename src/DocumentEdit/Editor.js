@@ -1,4 +1,4 @@
-export default function Editor({ $target, initialState, onEditing }) {
+export default function Editor({ $target, initialState = { title: '', content: '' }, onEdit }) {
   const $editor = document.createElement("div");
   $target.appendChild($editor);
 
@@ -29,7 +29,8 @@ export default function Editor({ $target, initialState, onEditing }) {
     if (this.state[name] !== undefined) {
         const nextState = {...this.state, [name]: target.value};
         this.setState(nextState);
-        onEditing(nextState)
+        onEdit(nextState)
     }
+    
   });
 }
