@@ -1,11 +1,16 @@
 import DocumentList from "./DocumentList.js";
+import { request } from "../utils/api.js";
 
-export default function SideBar({
+export default function SideBar({ $target }) {
+  const documentList = new DocumentList({
     $target,
-    initialState
-}) {
-    new DocumentList({
-        $target,
-        initialState
-    })
+    initialState: [],
+  });
+
+  const fetchDocument = async () => {
+    const document = await request("/documents");
+    documentList.setState(document);
+  };
+
+  fetchDocument();
 }

@@ -3,7 +3,6 @@ export default function DocumentList({ $target, initialState }) {
   $target.appendChild($documentList);
 
   this.state = initialState;
-    console.log(this.state);
   this.setState = (nextState) => {
     this.state = nextState;
     this.render();
