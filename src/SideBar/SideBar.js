@@ -12,5 +12,9 @@ export default function SideBar({ $target }) {
     documentList.setState(document);
   };
 
+  this.render = () => {
+    fetchDocument();
+  }
+
   fetchDocument();
 }
