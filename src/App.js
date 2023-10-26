@@ -19,21 +19,9 @@ export default function App({ $target, initialState }) {
       }),
     });
     history.replaceState(null, null, `/documents/${createdDocument.id}`);
-    // removeItem(documentLocalKey);
     documentEditPage.setState({ documentId: createdDocument.id });
     sideBar.render();
   };
-
-  // const isNew = this.state.documentId === "new";
-  // if (isNew) {
-  //   // console.log(document); //{title, content} 잘들어감
-  //   const createdDocument = await request("/documents", {
-  //     method: "POST",
-  //     body: JSON.stringify(document),
-  //   });
-  //   history.replaceState(null, null, `/documents/${createdDocument.id}`);
-  //   // 주소를 바꿔줌 현재로 craetedDocument.id
-  //   removeItem(documentLocalKey);
 
   const sideBar = new SideBar({
     $target: $page,
@@ -80,8 +68,8 @@ export default function App({ $target, initialState }) {
       sideBar.render();
     } else if (pathname.indexOf("/documents/") === 0) {
       // /documents/ 이걸로 시작하는 경우는
-      const [, , documentId] = pathname.split("/"); // 두번째 인덱스값이 필요.
-      documentEditPage.setState({ documentId });
+      const [, , documentId] = pathname.split("/"); // 두번째 인덱스값이 필요. 
+      documentEditPage.setState({ documentId }); 
     }
   };
 
