@@ -9,17 +9,33 @@ export default function App({ $target, initialState }) {
   $page.style.flexDirection = "row";
   $target.appendChild($page);
 
-  const onAdd = async (a) => {
-    push(`/documents/${a}`);
+  //{parentId: id}
+  const onAdd = async (value) => {
+    console.log(value);
+
+    // 부모 id가 없으면
+    push(`/documents/new`);
     const createdDocument = await request("/documents", {
       method: "POST",
+      body: JSON.stringify({
+        title: "",
+        parent: "123"
+      }),
+    });
+    history.replaceState(null, null, `/documents/${createdDocument.id}`);
+    documentEditPage.setState({ documentId: createdDocument.id, });
+    sideBar.render();
+  };
+
+  const onDelete = async (a) => {
+    push("/");
+    await request(`/documents/${a}`, {
+      method: "DELETE",
       body: JSON.stringify({
         title: "",
         parent: "",
       }),
     });
-    history.replaceState(null, null, `/documents/${createdDocument.id}`);
-    documentEditPage.setState({ documentId: createdDocument.id });
     sideBar.render();
   };
 
@@ -27,17 +43,18 @@ export default function App({ $target, initialState }) {
     $target: $page,
     initialState,
     onAdd,
+    onDelete,
   });
 
   let timer = null;
-  const onEdit = ({ id, title, content }) => {
+  const onEdit = ({ id, title, content,  parent }) => {
     if (timer !== null) {
       clearTimeout(timer);
     }
     timer = setTimeout(async () => {
       const editedDocument = await request(`/documents/${id}`, {
         method: "PUT",
-        body: JSON.stringify({ title, content }),
+        body: JSON.stringify({ title, content,  parent }),
       });
 
       documentEditPage.setState({
@@ -55,6 +72,7 @@ export default function App({ $target, initialState }) {
       documentId: "",
       document: {
         title: "",
+        parent: "",
         content: "",
       },
     },
@@ -68,8 +86,8 @@ export default function App({ $target, initialState }) {
       sideBar.render();
     } else if (pathname.indexOf("/documents/") === 0) {
       // /documents/ 이걸로 시작하는 경우는
-      const [, , documentId] = pathname.split("/"); // 두번째 인덱스값이 필요. 
-      documentEditPage.setState({ documentId }); 
+      const [, , documentId] = pathname.split("/"); // 두번째 인덱스값이 필요.
+      documentEditPage.setState({ documentId }); //19128
     }
   };
 

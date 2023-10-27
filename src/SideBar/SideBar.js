@@ -2,13 +2,15 @@ import DocumentList from "./DocumentList.js";
 import { request } from "../utils/api.js";
 import DocumentAddButton from "./DocumentAddButton.js";
 
-export default function SideBar({ $target, onAdd }) {
+export default function SideBar({ $target, onAdd, onDelete }) {
   const $sideBarContents = document.createElement("div");
   $target.appendChild($sideBarContents);
 
   const documentList = new DocumentList({
     $target: $sideBarContents,
     initialState: [],
+    onDelete,
+    onAdd
   });
   new DocumentAddButton({
     $target: $sideBarContents,

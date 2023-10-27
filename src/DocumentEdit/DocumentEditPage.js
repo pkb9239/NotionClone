@@ -7,6 +7,7 @@ export default function DocumentEditPage({ $target, initialState, onEdit }) {
   initialState: {
     documentId: "",
     document: {
+      parent: "",
       title: "",
       content: "",
     },
@@ -22,11 +23,10 @@ export default function DocumentEditPage({ $target, initialState, onEdit }) {
   });
 
   this.setState = async (nextState) => {
-    console.log(this.state, nextState)
+    console.log(this.state, nextState);
     if (this.state.documentId === nextState.documentId) {
-      //다르면 밑에 실행
       this.state = { ...this.state, ...nextState };
-      console.log(this.state)
+
       editor.setState(
         this.state.document || {
           title: "",
