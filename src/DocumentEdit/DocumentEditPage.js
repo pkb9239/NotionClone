@@ -23,7 +23,7 @@ export default function DocumentEditPage({ $target, initialState, onEdit }) {
   });
 
   this.setState = async (nextState) => {
-    console.log(this.state, nextState);
+    console.log(nextState);
     if (this.state.documentId === nextState.documentId) {
       this.state = { ...this.state, ...nextState };
 

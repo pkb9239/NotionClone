@@ -30,6 +30,7 @@ export default function Editor({ $target, initialState = { title: '', content: '
         const nextState = {...this.state, [name]: target.value};
         this.setState(nextState);
         onEdit(nextState)
+        console.log(nextState);
     }
     
   });

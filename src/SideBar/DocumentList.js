@@ -12,7 +12,7 @@ export default function DocumentList({ $target, initialState , onDelete, onAdd})
   };
 
   this.renderDocument = () => {
-    console.log(this.state)
+
     $documentList.innerHTML = `
     <ul>
         ${this.state
@@ -45,7 +45,7 @@ export default function DocumentList({ $target, initialState , onDelete, onAdd})
       onDelete(id)
     }
     if (e.target.className === "add") {
-      onAdd({parentId: id})
+      onAdd(parseInt(id))
     }
     
   });

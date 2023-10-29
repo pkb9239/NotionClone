@@ -9,52 +9,65 @@ export default function App({ $target, initialState }) {
   $page.style.flexDirection = "row";
   $target.appendChild($page);
 
-  //{parentId: id}
-  const onAdd = async (value) => {
-    console.log(value);
+  const createDocument = async (title, parent) => {
+    try {
+      
+      const { id: newId, ...newDocument } = await request("/documents", {
+        method: "POST",
+        body: JSON.stringify({
+          title,
+          parent,
+        }),
+      });
 
-    // 부모 id가 없으면
-    push(`/documents/new`);
-    const createdDocument = await request("/documents", {
-      method: "POST",
-      body: JSON.stringify({
-        title: "",
-        parent: "123"
-      }),
-    });
-    history.replaceState(null, null, `/documents/${createdDocument.id}`);
-    documentEditPage.setState({ documentId: createdDocument.id, });
-    sideBar.render();
+      history.replaceState(null, null, `${newId}`);
+
+      documentEditPage.setState({
+        documentId: newId,
+        document: newDocument,
+      });
+
+      sideBar.render({
+        ...sideBar.state,
+        selectedDocumentId: parseInt(newId),
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const onAdd = async (id) => {
+    try {
+      if (id === "new") {
+        // 새 루트 문서 생성
+        createDocument("", null);
+      } else if (typeof id === "number") {
+        // 새 하위 문서 생성
+        createDocument("", id);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const onDelete = async (a) => {
-    push("/");
-    await request(`/documents/${a}`, {
+  const onDelete = async (id) => {
+    await request(`/documents/${id}`, {
       method: "DELETE",
-      body: JSON.stringify({
-        title: "",
-        parent: "",
-      }),
     });
+    push("/");
     sideBar.render();
+    this.route()
   };
 
-  const sideBar = new SideBar({
-    $target: $page,
-    initialState,
-    onAdd,
-    onDelete,
-  });
 
   let timer = null;
-  const onEdit = ({ id, title, content,  parent }) => {
+  const onEdit = ({ id, title, content }) => {
     if (timer !== null) {
       clearTimeout(timer);
     }
     timer = setTimeout(async () => {
       const editedDocument = await request(`/documents/${id}`, {
         method: "PUT",
-        body: JSON.stringify({ title, content,  parent }),
+        body: JSON.stringify({ title, content }),
       });
 
       documentEditPage.setState({
@@ -65,6 +78,16 @@ export default function App({ $target, initialState }) {
       sideBar.render();
     }, 1000);
   };
+
+  const sideBar = new SideBar({
+    $target: $page,
+    initialState: {
+      documents: [],
+      selectedDocumentId: null,
+    },
+    onAdd,
+    onDelete,
+  });
 
   const documentEditPage = new DocumentEditPage({
     $target: $page,
@@ -77,6 +100,7 @@ export default function App({ $target, initialState }) {
       },
     },
     onEdit,
+    onDelete
   });
 
   this.route = () => {
@@ -87,7 +111,10 @@ export default function App({ $target, initialState }) {
     } else if (pathname.indexOf("/documents/") === 0) {
       // /documents/ 이걸로 시작하는 경우는
       const [, , documentId] = pathname.split("/"); // 두번째 인덱스값이 필요.
-      documentEditPage.setState({ documentId }); //19128
+      documentEditPage.setState({
+        ...documentEditPage.state,
+        documentId: isNaN(documentId) ? documentId : parseInt(documentId),
+      });
     }
   };
 
